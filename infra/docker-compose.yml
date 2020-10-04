@@ -1,0 +1,78 @@
+version: "3.8"
+services:
+  jenkins_master:
+    build: ./build/jenkins_master
+    ports:
+      - target: 8080
+        published: 8080
+    volumes:
+      - ./data/jenkins_home:/var/jenkins_home
+    user: ${HOST_UID}:${HOST_GID}
+    environment:
+      - USER_CREDS=/run/secrets/user_credentials
+    secrets:
+      - user_credentials
+
+  jenkins_agent_maven:
+    build: ./build/jenkins_agent_maven
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=${SSH_PUB_KEY}
+    ports:
+      - target: 22
+        published: 8022
+
+  jenkins_agent_python:
+    build: ./build/jenkins_agent_python
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=${SSH_PUB_KEY}
+    ports:
+      - target: 22
+        published: 8122
+
+  web_prod:
+    build: ./build/webserver
+    environment:
+      - SSH_PUB_KEY=${SSH_PUB_KEY}
+    ports:
+      - target: 22
+        published: 5022
+      - target: 5000
+        published: 5000
+
+  web_test:
+    build: ./build/webserver
+    environment:
+      - SSH_PUB_KEY=${SSH_PUB_KEY}
+    ports:
+      - target: 22
+        published: 5522
+      - target: 5500
+        published: 5500
+
+  gitea:
+    build: ./build/gitea
+    volumes:
+      - /data
+    ports:
+      - target: 3000
+        published: 3000
+      - target: 22
+        published: 3022
+    environment:
+      - USER_CREDS=/run/secrets/user_credentials
+    secrets:
+      - user_credentials
+
+  gitea_init:
+    build: ./build/gitea_init
+    depends_on:
+      - gitea
+    environment:
+      - USER_CREDS=/run/secrets/user_credentials
+    secrets:
+      - user_credentials
+
+
+secrets:
+  user_credentials:
+    file: ./secret/user_credentials

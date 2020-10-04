@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -ex
+
+mkdir -p "${WEB_HOME}/.ssh"
+echo "${SSH_PUB_KEY}" > "${WEB_HOME}/.ssh/authorized_keys"
+chmod 0700 -R "${WEB_HOME}/.ssh"
+chown -R ${WEB_USER}:${WEB_USER} "${WEB_HOME}/.ssh"
+
+env | grep _ >> /etc/environment
+ssh-keygen -A
+exec /usr/sbin/sshd -D -e "${@}"
