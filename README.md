@@ -10,6 +10,8 @@ You'll get:
   * Test server ( http://localhost:5500 )
   * Production ( http://localhost:5000 )
 
+![Course infra overview](/infra.png)
+
 ## Prerequisites
 
 Fairly recent:
