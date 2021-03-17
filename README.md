@@ -16,7 +16,7 @@ You'll get:
 
 Fairly recent:
 * Docker
-* Docker Compose
+* Docker Compose (=< 1.27)
 
 ## Setup
 
