@@ -25,13 +25,14 @@ wait_for_service() {
     while ! get_uid; do
         sleep 1
     done
+    sleep 3
 }
 
 migrate_repo() {
     local repo=$1
     local repo_name=$(basename $repo)
     local uid=$(get_uid)
-    curl -X POST "http://${host}:3000/api/v1/repos/migrate" \
+    curl --fail -X POST "http://${host}:3000/api/v1/repos/migrate" \
 	 -H  "accept: application/json" \
 	 -H  "authorization: Basic ${digest}" \
 	 -H  "Content-Type: application/json" \
